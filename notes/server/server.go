@@ -29,9 +29,9 @@ func main() {
 	s := grpc.NewServer(opts...)
 
 	mongoClient := db.NewMongoClient()
-
+	collection := db.NewCollection(mongoClient, "notes", "notes")
 	notes.RegisterService(s, &notes.NoteService{
-		MongoClient: mongoClient,
+		Collection: collection,
 	})
 
 	go func() {

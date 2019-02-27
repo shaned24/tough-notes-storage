@@ -7,10 +7,18 @@ option go_package = "notespb";
 message Note {
     string id = 1;
     string title = 2;
-    string contents = 3;
+    string content = 3;
     string author_id = 4;
 }
 
-service NoteService {
+message CreateNoteRequest {
+  Note note = 1;
+};
 
+message CreateNoteResponse {
+    Note note = 1;
+};
+
+service NoteService {
+    rpc CreateNote (CreateNoteRequest) returns (CreateNoteResponse);
 };
