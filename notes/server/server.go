@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/shaned24/tough-notes-storage/notes/server/db"
 	"github.com/shaned24/tough-notes-storage/notes/server/notes"
+	"github.com/shaned24/tough-notes-storage/notes/server/storage"
 	"google.golang.org/grpc"
 	"log"
 	"net"
@@ -28,10 +28,10 @@ func main() {
 	var opts []grpc.ServerOption
 	s := grpc.NewServer(opts...)
 
-	mongoClient := db.NewMongoClient()
-	collection := db.NewCollection(mongoClient, "notes", "notes")
+	mongoClient := storage.NewMongoClient()
+	collection := storage.NewMongoCollection(mongoClient, "notes", "notes")
 	notes.RegisterService(s, &notes.NoteService{
-		Collection: collection,
+		Storage: storage.NewMongoStorage(mongoClient, collection),
 	})
 
 	go func() {

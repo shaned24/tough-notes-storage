@@ -23,15 +23,11 @@ func main() {
 	client := notespb.NewNoteServiceClient(conn)
 
 	doUnary(client)
-	//doServerStreaming(client)
-	//doClientStreamingRequest(client)
-	//doBiDiStreamingRequest(client)
-	//doUnaryDeadline(client, time.Second*5)
-	//doUnaryDeadline(client, time.Second)
 }
 
 func doUnary(client notespb.NoteServiceClient) {
 	log.Println("doing unary request")
+
 	req := &notespb.CreateNoteRequest{
 		Note: &notespb.Note{
 			Content:  "# Some Markdown yes!",
