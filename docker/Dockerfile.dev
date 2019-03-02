@@ -1,0 +1,8 @@
+FROM golang
+
+WORKDIR /workspace
+
+COPY go.mod go.mod
+RUN go mod download
+
+COPY . .

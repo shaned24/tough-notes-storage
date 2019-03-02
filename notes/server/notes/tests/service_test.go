@@ -1,10 +1,11 @@
-package notes
+package tests
 
 import (
 	"context"
 	"github.com/golang/mock/gomock"
 	"github.com/magiconair/properties/assert"
 	"github.com/shaned24/tough-notes-storage/notes/notespb"
+	"github.com/shaned24/tough-notes-storage/notes/server/notes"
 	"github.com/shaned24/tough-notes-storage/notes/server/storage"
 	"github.com/shaned24/tough-notes-storage/notes/server/storage/tests"
 	"testing"
@@ -40,7 +41,7 @@ func TestCreateNote(t *testing.T) {
 	mockStorage.EXPECT().CreateNote(expectedContext, inputNoteItem).Times(1).Return(outputNoteItem, nil)
 
 	// Create Service
-	service := NewNoteService(mockStorage)
+	service := notes.NewNoteService(mockStorage)
 
 	// Create Request
 	req := &notespb.CreateNoteRequest{

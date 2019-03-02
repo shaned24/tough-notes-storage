@@ -5,14 +5,13 @@ import (
 	"fmt"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"log"
 )
 
 func NewMongoClient() *mongo.Client {
-	mongoClient, err := mongo.NewClient(options.Client().ApplyURI("mongodb://localhost:27017"))
+	mongoClient, err := mongo.NewClient("mongodb://localhost:27017")
 
 	if err != nil {
 		log.Fatalf("failed to initialize the mongodb client: %v", err)
