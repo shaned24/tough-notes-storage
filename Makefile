@@ -15,7 +15,7 @@ build-dev:
 	@docker build . -f docker/Dockerfile.dev -t $(DEV_IMAGE):latest
 
 test:
-	@docker run --rm -v $(PWD):/workspace $(DEV_IMAGE):latest go test ./...
+	go test ./... -cover -coverpkg ./... -coverprofile=c.out
 
 env:
 	$(DEV_ENV) up -d
@@ -36,3 +36,10 @@ mocks:
 	mockgen \
 	 -package tests \
 	 -destination notes/server/storage/tests/mock_storage.go $(GO_PACKAGE)/notes/server/storage NoteStorage
+
+clean:
+	rm c.out
+	rm coverage.html
+
+coverage:
+	go tool cover -html=c.out -o coverage.html

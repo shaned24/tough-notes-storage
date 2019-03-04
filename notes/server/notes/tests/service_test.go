@@ -8,6 +8,7 @@ import (
 	"github.com/shaned24/tough-notes-storage/notes/server/notes"
 	"github.com/shaned24/tough-notes-storage/notes/server/storage"
 	"github.com/shaned24/tough-notes-storage/notes/server/storage/tests"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
@@ -30,8 +31,8 @@ func TestCreateNote(t *testing.T) {
 	// Mocks
 	mockStorage := tests.NewMockNoteStorage(ctrl)
 	mockStorage.EXPECT().CreateNote(
-		gomock.Eq(expectedContext),
-		gomock.Eq(inputNoteItem),
+		expectedContext,
+		inputNoteItem,
 	).Times(1).Return(&expectedNoteItem, nil)
 
 	// Create Service
@@ -47,7 +48,44 @@ func TestCreateNote(t *testing.T) {
 	}
 
 	// Act
-	result, _ := service.CreateNote(expectedContext, req)
+	result, err := service.CreateNote(expectedContext, req)
+	require.NoError(t, err)
+
+	// Assert
+	assert.Equal(t, result.Note.Title, expectedTitle)
+	assert.Equal(t, result.Note.AuthorId, expectedAuthor)
+	assert.Equal(t, result.Note.Id, expectedID)
+	assert.Equal(t, result.Note.Title, expectedTitle)
+}
+
+func TestReadNote(t *testing.T) {
+	// Mock Controller
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	// Expected
+	expectedID := "my-id"
+	expectedAuthor := "wow"
+	expectedContent := "many"
+	expectedTitle := "content"
+	expectedNoteItem := &storage.NoteItem{ID: expectedID, AuthorID: expectedAuthor, Content: expectedContent, Title: expectedTitle}
+
+	// Mocks
+	mockStorage := tests.NewMockNoteStorage(ctrl)
+	mockStorage.EXPECT().GetNote(
+		gomock.Eq(context.Background()),
+		gomock.Eq(expectedID),
+	).Times(1).Return(expectedNoteItem, nil)
+
+	// Create Service
+	service := notes.NewNoteService(mockStorage)
+
+	// Create Request
+	req := &notespb.ReadNoteRequest{Id: expectedID}
+
+	// Act
+	result, err := service.ReadNote(context.Background(), req)
+	require.NoError(t, err)
 
 	// Assert
 	assert.Equal(t, result.Note.Title, expectedTitle)

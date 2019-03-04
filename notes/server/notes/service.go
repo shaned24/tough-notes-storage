@@ -17,7 +17,7 @@ type NoteService struct {
 func (s *NoteService) ReadNote(ctx context.Context, req *notespb.ReadNoteRequest) (*notespb.ReadNoteResponse, error) {
 	noteId := req.GetId()
 
-	noteItem, err := s.Storage.GetNote(context.TODO(), noteId)
+	noteItem, err := s.Storage.GetNote(context.Background(), noteId)
 
 	if err != nil {
 		return nil, err
