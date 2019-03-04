@@ -23,22 +23,16 @@ func TestCreateNote(t *testing.T) {
 	expectedContent := "many"
 	expectedTitle := "content"
 
-	inputNoteItem := &storage.NoteItem{
-		AuthorID: expectedAuthor,
-		Content:  expectedContent,
-		Title:    expectedTitle,
-	}
-
-	outputNoteItem := &storage.NoteItem{
-		ID:       expectedID,
-		AuthorID: expectedAuthor,
-		Content:  expectedContent,
-		Title:    expectedTitle,
-	}
+	inputNoteItem := &storage.NoteItem{AuthorID: expectedAuthor, Content: expectedContent, Title: expectedTitle}
+	expectedNoteItem := *inputNoteItem
+	expectedNoteItem.ID = expectedID
 
 	// Mocks
 	mockStorage := tests.NewMockNoteStorage(ctrl)
-	mockStorage.EXPECT().CreateNote(expectedContext, inputNoteItem).Times(1).Return(outputNoteItem, nil)
+	mockStorage.EXPECT().CreateNote(
+		gomock.Eq(expectedContext),
+		gomock.Eq(inputNoteItem),
+	).Times(1).Return(&expectedNoteItem, nil)
 
 	// Create Service
 	service := notes.NewNoteService(mockStorage)
