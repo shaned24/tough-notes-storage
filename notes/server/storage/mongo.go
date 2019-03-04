@@ -3,23 +3,36 @@ package storage
 import (
 	"context"
 	"fmt"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"log"
+	"time"
 )
 
 func NewMongoClient() *mongo.Client {
-	mongoClient, err := mongo.NewClient("mongodb://localhost:27017")
+	mongoClient, err := mongo.NewClient(options.Client().ApplyURI("mongodb://localhost:27017"))
 
 	if err != nil {
 		log.Fatalf("failed to initialize the mongodb client: %v", err)
 	}
 
-	err = mongoClient.Connect(context.TODO())
+	mongoCtx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+
+	err = mongoClient.Connect(mongoCtx)
 	if err != nil {
 		log.Fatalf("failed to connect to mongodb server: %v", err)
+	}
+
+	ctx, _ := context.WithTimeout(context.Background(), 2*time.Second)
+	err = mongoClient.Ping(ctx, readpref.Primary())
+
+	if err != nil {
+		log.Fatalf("Mongo server not available")
 	}
 
 	return mongoClient
@@ -46,6 +59,41 @@ type noteItem struct {
 type MongoStorage struct {
 	Client     *mongo.Client
 	Collection *mongo.Collection
+}
+
+func (s *MongoStorage) GetNote(ctx context.Context, noteId string) (*NoteItem, error) {
+
+	oid, err := primitive.ObjectIDFromHex(noteId)
+
+	if err != nil {
+		return nil, status.Errorf(
+			codes.InvalidArgument,
+			fmt.Sprintf("Cannot parse note id: %v", err),
+		)
+	}
+
+	noteItem := &noteItem{}
+	filter := bson.M{"_id": oid}
+	mongoCtx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+
+	result := s.Collection.FindOne(mongoCtx, filter)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if err := result.Decode(noteItem); err != nil {
+		return nil, status.Errorf(
+			codes.NotFound,
+			fmt.Sprintf("Cannot find note with specified id: %v", oid),
+		)
+	}
+
+	return &NoteItem{
+		Title:    noteItem.Title,
+		AuthorID: noteItem.AuthorID,
+		Content:  noteItem.Content,
+		ID:       noteItem.ID.Hex(),
+	}, nil
 }
 
 func (s *MongoStorage) CreateNote(ctx context.Context, note *NoteItem) (*NoteItem, error) {

@@ -14,8 +14,23 @@ type NoteService struct {
 	Storage storage.NoteStorage
 }
 
-func (s *NoteService) ReadNote(context.Context, *notespb.ReadNoteRequest) (*notespb.ReadNoteResponse, error) {
-	panic("implement me")
+func (s *NoteService) ReadNote(ctx context.Context, req *notespb.ReadNoteRequest) (*notespb.ReadNoteResponse, error) {
+	noteId := req.GetId()
+
+	noteItem, err := s.Storage.GetNote(context.TODO(), noteId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &notespb.ReadNoteResponse{
+		Note: &notespb.Note{
+			Id:       noteItem.ID,
+			AuthorId: noteItem.AuthorID,
+			Content:  noteItem.Content,
+			Title:    noteItem.Title,
+		},
+	}, nil
 }
 
 func (s *NoteService) CreateNote(ctx context.Context, req *notespb.CreateNoteRequest) (*notespb.CreateNoteResponse, error) {
