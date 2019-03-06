@@ -4,6 +4,10 @@ DC=docker-compose
 DC_DEV_FLAGS=-f docker/compose/base.yaml
 DEV_ENV=$(DC) $(DC_DEV_FLAGS)
 GO_PACKAGE=github.com/shaned24/tough-notes-storage
+HELM_CHART=deploy/helm/toughnotes
+HELM_RELEASE_NAME=toughnotes
+
+.PHONY: deploy
 
 generate:
 	@protoc notes/notespb/notes.proto --go_out=plugins=grpc:.
@@ -43,3 +47,12 @@ clean:
 
 coverage:
 	go tool cover -html=c.out -o coverage.html
+
+publish-image: build
+	@docker push $(IMAGE)
+
+deploy:
+	@helm upgrade \
+	 --install \
+	 $(HELM_RELEASE_NAME) \
+	 $(HELM_CHART)
