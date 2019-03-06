@@ -2,19 +2,26 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"crypto/tls"
 	"github.com/shaned24/tough-notes-storage/notes/notespb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/status"
 	"log"
+	"net"
 )
 
 func main() {
-	host := "localhost"
-	port := "50051"
+	host := "notes.toughcrab.com"
+	port := "443"
 
-	conn, err := grpc.Dial(fmt.Sprintf("%s:%s", host, port), grpc.WithInsecure())
+	opts := []grpc.DialOption{
+		grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{})),
+	}
+
+	dialstr := net.JoinHostPort(host, port)
+	conn, err := grpc.Dial(dialstr, opts...)
 
 	if err != nil {
 		log.Fatalf("Could not connect: %v", err)
@@ -42,7 +49,7 @@ func doCreateNoteUnary(client notespb.NoteServiceClient) {
 	resp, err := client.CreateNote(context.Background(), req)
 
 	if err != nil {
-		log.Fatalf("error while calling Greet RPC: %v", err)
+		log.Fatalf("error while calling Create Note RPC: %v", err)
 	}
 
 	log.Printf("Response from Greet: %v", resp.Note)

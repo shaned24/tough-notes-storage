@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "toughnotes.fullname" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "toughnotes.name" . }}
+    helm.sh/chart: {{ include "toughnotes.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+data:
+  {{ if .Values.monogoHost }}
+  MONGO_HOST: {{ .Values.monogoHost }}
+  {{ else }}
+  MONGO_HOST: {{ .Release.Name }}-mongodb
+  {{ end }}
+
+  {{ if .Values.monogoPort }}
+  MONGO_PORT: {{ .Values.monogoPort }}
+  {{ end }}
+
