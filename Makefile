@@ -1,13 +1,16 @@
 IMAGE=shaned24/tough-notes
 TAG=latest
 DEV_IMAGE=shaned24/tough-notes-dev
-DEV_TAG=shaned24/tough-notes-dev
+DEV_TAG=latest
 DC=docker-compose
 DC_DEV_FLAGS=-f docker/compose/base.yaml
 DEV_ENV=$(DC) $(DC_DEV_FLAGS)
 GO_PACKAGE=github.com/shaned24/tough-notes-storage
 HELM_CHART=deploy/helm/toughnotes
 HELM_RELEASE_NAME=toughnotes
+
+
+TEST_COMMAND=go test ./... -cover -coverpkg ./... -coverprofile=c.out
 
 .PHONY: deploy
 
@@ -20,8 +23,14 @@ docker-build:
 docker-build-dev:
 	@docker build . -f docker/Dockerfile.dev -t $(DEV_IMAGE):$(DEV_TAG)
 
+docker-test: docker-build-dev
+	@docker run --rm $(DEV_IMAGE):$(DEV_TAG) $(TEST_COMMAND)
+
+docker-publish:
+	@docker push $(IMAGE)
+
 test:
-	go test ./... -cover -coverpkg ./... -coverprofile=c.out
+	$(TEST_COMMAND)
 
 env:
 	$(DEV_ENV) up -d
@@ -49,9 +58,6 @@ clean:
 
 coverage:
 	go tool cover -html=c.out -o coverage.html
-
-docker-publish: build
-	@docker push $(IMAGE)
 
 deploy:
 	@helm upgrade \
