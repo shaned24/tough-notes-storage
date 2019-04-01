@@ -17,6 +17,7 @@ services:
   - docker
 
 stages:
+  - test
   - docker-build
   - docker-publish
   - deploy
