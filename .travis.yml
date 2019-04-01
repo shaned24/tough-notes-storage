@@ -16,15 +16,10 @@ before_install:
 services:
   - docker
 
-stages:
-  - docker-build
-  - docker-publish
-  - deploy
-
 jobs:
   include:
-    - stage: test
-      script: make test
+    - stage: docker-test
+      script: make docker-test
     - stage: docker-build
       script: make docker-build
     - stage: docker-publish
