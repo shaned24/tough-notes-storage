@@ -1,5 +1,7 @@
 IMAGE=shaned24/tough-notes
+TAG=latest
 DEV_IMAGE=shaned24/tough-notes-dev
+DEV_TAG=shaned24/tough-notes-dev
 DC=docker-compose
 DC_DEV_FLAGS=-f docker/compose/base.yaml
 DEV_ENV=$(DC) $(DC_DEV_FLAGS)
@@ -12,11 +14,11 @@ HELM_RELEASE_NAME=toughnotes
 generate:
 	@protoc notes/notespb/notes.proto --go_out=plugins=grpc:.
 
-build:
-	@docker build . -f docker/Dockerfile -t $(IMAGE):latest
+docker-build:
+	@docker build . -f docker/Dockerfile -t $(IMAGE):$(TAG)
 
-build-dev:
-	@docker build . -f docker/Dockerfile.dev -t $(DEV_IMAGE):latest
+docker-build-dev:
+	@docker build . -f docker/Dockerfile.dev -t $(DEV_IMAGE):$(DEV_TAG)
 
 test:
 	go test ./... -cover -coverpkg ./... -coverprofile=c.out
@@ -34,7 +36,7 @@ client-run:
 	go run notes/client/client.go
 
 docker-run:
-	@docker run --rm $(IMAGE):latest
+	@docker run --rm $(IMAGE):$(TAG)
 
 mocks:
 	mockgen \
@@ -48,7 +50,7 @@ clean:
 coverage:
 	go tool cover -html=c.out -o coverage.html
 
-publish-image: build
+docker-publish: build
 	@docker push $(IMAGE)
 
 deploy:
