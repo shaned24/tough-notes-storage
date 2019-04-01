@@ -10,7 +10,8 @@ HELM_CHART=deploy/helm/toughnotes
 HELM_RELEASE_NAME=toughnotes
 
 
-TEST_COMMAND=go test ./... -cover -coverpkg ./... -coverprofile=c.out
+#TEST_COMMAND=go test ./... -cover -coverpkg ./... -coverprofile=c.out
+TEST_COMMAND=go test ./...
 
 .PHONY: deploy
 
