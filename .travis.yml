@@ -16,6 +16,12 @@ before_install:
 services:
   - docker
 
+stages:
+  - docker-test
+  - docker-build
+  - docker-publish
+  - deploy
+
 jobs:
   include:
     - stage: docker-test
