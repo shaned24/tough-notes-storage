@@ -27,8 +27,8 @@ docker-build-dev:
 docker-test: docker-build-dev
 	@docker run --rm $(DEV_IMAGE):$(DEV_TAG) $(TEST_COMMAND)
 
-docker-publish:
-	@docker push $(IMAGE)
+docker-publish: docker-build
+	@docker push $(IMAGE):$(TAG)
 
 test:
 	$(TEST_COMMAND)
