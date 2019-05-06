@@ -61,7 +61,6 @@ coverage:
 	go tool cover -html=c.out -o coverage.html
 
 deploy:
-	@helm upgrade \
-	 --install \
-	 $(HELM_RELEASE_NAME) \
-	 $(HELM_CHART)
+	HELM_RELEASE_NAME=$(HELM_RELEASE_NAME) \
+	HELM_CHART=$(HELM_CHART) \
+	./scripts/deploy.sh
