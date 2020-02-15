@@ -15,7 +15,7 @@ COPY . .
 # Builder
 FROM dev as builder
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -o /tough-notes notes/server/main.go notes/server/wire_gen.go
+RUN CGO_ENABLED=0 GOOS=linux go build -o /tough-notes ./notes/server
 
 # Production
 FROM scratch

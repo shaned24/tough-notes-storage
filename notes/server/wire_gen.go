@@ -7,13 +7,16 @@ package main
 
 import (
 	"github.com/shaned24/tough-notes-storage/notes/server/internal/notes"
-	"github.com/shaned24/tough-notes-storage/notes/server/internal/pkg/storage"
 )
 
 // Injectors from inject.go:
 
 func setupNoteService() (*notes.NoteService, error) {
-	client := storage.NewMongoClient()
+	mongoConfig, err := notes.ProvideMongoConfig()
+	if err != nil {
+		return nil, err
+	}
+	client := notes.ProvideMongoClient(mongoConfig)
 	mongoDbName := notes.ProvideMongoDbName()
 	mongoCollectionName := notes.ProvideMongoCollectionName()
 	collection := notes.ProvideMongoCollection(client, mongoDbName, mongoCollectionName)

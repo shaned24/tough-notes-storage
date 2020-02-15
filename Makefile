@@ -64,3 +64,6 @@ deploy:
 	HELM_RELEASE_NAME=$(HELM_RELEASE_NAME) \
 	HELM_CHART=$(HELM_CHART) \
 	./scripts/deploy.sh
+
+wire:
+	wire ./notes/server

@@ -3,7 +3,6 @@ package storage
 import (
 	"context"
 	"fmt"
-	"github.com/shaned24/tough-notes-storage/notes/server/config"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -15,18 +14,21 @@ import (
 	"time"
 )
 
-func NewMongoClient() *mongo.Client {
-	host := config.Getenv("MONGO_HOST", "localhost")
-	port := config.Getenv("MONGO_PORT", "27017")
+type MongoConfig struct {
+	Host              string
+	Port              string
+	ConnectionTimeout time.Duration
+}
 
+func NewMongoClient(cfg *MongoConfig) *mongo.Client {
 	mongoClient, err := mongo.NewClient(options.Client().ApplyURI(
-		fmt.Sprintf("mongodb://%s:%s", host, port)))
+		fmt.Sprintf("mongodb://%s:%s", cfg.Host, cfg.Port)))
 
 	if err != nil {
 		log.Fatalf("failed to initialize the mongodb client: %v", err)
 	}
 
-	mongoCtx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	mongoCtx, _ := context.WithTimeout(context.Background(), cfg.ConnectionTimeout)
 
 	err = mongoClient.Connect(mongoCtx)
 	if err != nil {
