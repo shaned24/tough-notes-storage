@@ -16,3 +16,5 @@ require (
 	golang.org/x/crypto v0.0.0-20190228161510-8dd112bcdc25 // indirect
 	google.golang.org/grpc v1.19.0
 )
+
+go 1.13
