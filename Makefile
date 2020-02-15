@@ -22,7 +22,7 @@ docker-build:
 	@docker build . -f docker/Dockerfile -t $(IMAGE):$(TAG)
 
 docker-build-dev:
-	@docker build . -f docker/Dockerfile.dev -t $(DEV_IMAGE):$(DEV_TAG)
+	@docker build --target dev . -f docker/Dockerfile -t $(DEV_IMAGE):$(DEV_TAG)
 
 docker-test: docker-build-dev
 	@docker run --rm $(DEV_IMAGE):$(DEV_TAG) $(TEST_COMMAND)
@@ -51,7 +51,7 @@ docker-run:
 mocks:
 	mockgen \
 	 -package tests \
-	 -destination notes/server/storage/tests/mock_storage.go $(GO_PACKAGE)/notes/server/storage NoteStorage
+	 -destination notes/server/internal/pkg/storage/tests/mocks.go $(GO_PACKAGE)/notes/server/internal/pkg/storage NoteStorage
 
 clean:
 	rm c.out

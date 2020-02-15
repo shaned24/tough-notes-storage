@@ -1,10 +1,8 @@
 package main
 
 import (
-	"context"
 	"fmt"
-	"github.com/shaned24/tough-notes-storage/notes/server/notes"
-	"github.com/shaned24/tough-notes-storage/notes/server/storage"
+	"github.com/shaned24/tough-notes-storage/notes/notespb"
 	"google.golang.org/grpc"
 	"log"
 	"net"
@@ -24,15 +22,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
 	}
-
 	var opts []grpc.ServerOption
 	s := grpc.NewServer(opts...)
 
-	mongoClient := storage.NewMongoClient()
-	collection := storage.NewMongoCollection(mongoClient, "notes", "notes")
-	notes.RegisterService(s, &notes.NoteService{
-		Storage: storage.NewMongoStorage(mongoClient, collection),
-	})
+	service, _ := setupNoteService()
+	notespb.RegisterNoteServiceServer(s, service)
 
 	go func() {
 		log.Println("Serving on", fmt.Sprintf("%s:%s", host, port))
@@ -53,6 +47,5 @@ func main() {
 	log.Println("Stopping the listener.")
 	_ = listener.Close()
 	log.Println("Closing mongodb connection.")
-	_ = mongoClient.Disconnect(context.TODO())
-
+	_ = service.Stop()
 }

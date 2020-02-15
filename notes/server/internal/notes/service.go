@@ -4,17 +4,18 @@ import (
 	"context"
 	"fmt"
 	"github.com/shaned24/tough-notes-storage/notes/notespb"
-	"github.com/shaned24/tough-notes-storage/notes/server/storage"
-	"google.golang.org/grpc"
+	"github.com/shaned24/tough-notes-storage/notes/server/internal/pkg/storage"
+	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 type NoteService struct {
 	Storage storage.NoteStorage
+	mongo   *mongo.Client
 }
 
-func (s *NoteService) ReadNote(ctx context.Context, req *notespb.ReadNoteRequest) (*notespb.ReadNoteResponse, error) {
+func (s *NoteService) ReadNote(_ context.Context, req *notespb.ReadNoteRequest) (*notespb.ReadNoteResponse, error) {
 	noteId := req.GetId()
 
 	noteItem, err := s.Storage.GetNote(context.Background(), noteId)
@@ -59,8 +60,8 @@ func (s *NoteService) CreateNote(ctx context.Context, req *notespb.CreateNoteReq
 	}, nil
 }
 
-func RegisterService(server *grpc.Server, noteServer *NoteService) {
-	notespb.RegisterNoteServiceServer(server, noteServer)
+func (s *NoteService) Stop() error {
+	return s.mongo.Disconnect(context.Background())
 }
 
 func NewNoteService(s storage.NoteStorage) *NoteService {

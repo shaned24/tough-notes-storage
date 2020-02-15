@@ -47,13 +47,6 @@ func NewMongoCollection(client *mongo.Client, dbName string, collectionName stri
 	return client.Database(dbName).Collection(collectionName)
 }
 
-func NewMongoStorage(client *mongo.Client, collection *mongo.Collection) *MongoStorage {
-	return &MongoStorage{
-		Collection: collection,
-		Client:     client,
-	}
-}
-
 type noteItem struct {
 	ID       primitive.ObjectID `bson:"_id,omitempty"`
 	AuthorID string             `bson:"author_id"`
@@ -66,7 +59,7 @@ type MongoStorage struct {
 	Collection *mongo.Collection
 }
 
-func (s *MongoStorage) GetNote(ctx context.Context, noteId string) (*NoteItem, error) {
+func (s *MongoStorage) GetNote(_ context.Context, noteId string) (*NoteItem, error) {
 
 	oid, err := primitive.ObjectIDFromHex(noteId)
 
@@ -82,9 +75,6 @@ func (s *MongoStorage) GetNote(ctx context.Context, noteId string) (*NoteItem, e
 	mongoCtx, _ := context.WithTimeout(context.Background(), 5*time.Second)
 
 	result := s.Collection.FindOne(mongoCtx, filter)
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	if err := result.Decode(noteItem); err != nil {
 		return nil, status.Errorf(
