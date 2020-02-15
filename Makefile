@@ -27,8 +27,8 @@ docker-build-dev:
 docker-test: docker-build-dev
 	@docker run --rm $(DEV_IMAGE):$(DEV_TAG) $(TEST_COMMAND)
 
-docker-publish:
-	@docker push $(IMAGE)
+docker-publish: docker-build
+	@docker push $(IMAGE):$(TAG)
 
 test:
 	$(TEST_COMMAND)
@@ -61,7 +61,6 @@ coverage:
 	go tool cover -html=c.out -o coverage.html
 
 deploy:
-	@helm upgrade \
-	 --install \
-	 $(HELM_RELEASE_NAME) \
-	 $(HELM_CHART)
+	HELM_RELEASE_NAME=$(HELM_RELEASE_NAME) \
+	HELM_CHART=$(HELM_CHART) \
+	./scripts/deploy.sh
