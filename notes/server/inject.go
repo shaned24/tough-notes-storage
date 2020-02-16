@@ -4,13 +4,12 @@ package main
 
 import (
 	"github.com/google/wire"
-	"github.com/shaned24/tough-notes-storage/notes/server/internal/notes"
+	"github.com/shaned24/tough-notes-storage/notes/server/internal/server"
 )
 
-func setupNoteService() (*notes.NoteService, error) {
-
+func setupServer() (*server.Server, error) {
 	wire.Build(
-		notes.Providers,
+		server.Providers,
 	)
 	return nil, nil
 }

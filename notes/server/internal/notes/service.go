@@ -5,14 +5,12 @@ import (
 	"fmt"
 	"github.com/shaned24/tough-notes-storage/notes/notespb"
 	"github.com/shaned24/tough-notes-storage/notes/server/internal/pkg/storage"
-	"go.mongodb.org/mongo-driver/mongo"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 type NoteService struct {
 	Storage storage.NoteStorage
-	mongo   *mongo.Client
 }
 
 func (s *NoteService) ReadNote(_ context.Context, req *notespb.ReadNoteRequest) (*notespb.ReadNoteResponse, error) {
@@ -58,10 +56,6 @@ func (s *NoteService) CreateNote(ctx context.Context, req *notespb.CreateNoteReq
 			Title:    noteItem.Title,
 		},
 	}, nil
-}
-
-func (s *NoteService) Stop() error {
-	return s.mongo.Disconnect(context.Background())
 }
 
 func NewNoteService(s storage.NoteStorage) *NoteService {
