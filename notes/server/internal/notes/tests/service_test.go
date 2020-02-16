@@ -40,7 +40,7 @@ func TestCreateNote(t *testing.T) {
 
 	// Create Request
 	req := &notespb.CreateNoteRequest{
-		Note: &notespb.Note{
+		Note: &notespb.CreateNote{
 			AuthorId: expectedAuthor,
 			Content:  expectedContent,
 			Title:    expectedTitle,

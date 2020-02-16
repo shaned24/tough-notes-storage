@@ -11,8 +11,14 @@ message Note {
     string author_id = 4;
 }
 
+message CreateNote {
+    string title = 2;
+    string content = 3;
+    string author_id = 4;
+}
+
 message CreateNoteRequest {
-  Note note = 1;
+    CreateNote note = 1;
 };
 
 message CreateNoteResponse {

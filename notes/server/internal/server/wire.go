@@ -3,12 +3,14 @@ package server
 import (
 	"github.com/google/wire"
 	"github.com/shaned24/tough-notes-storage/notes/server/internal/notes"
+	"github.com/shaned24/tough-notes-storage/notes/server/internal/pkg/database"
 )
 
 var Providers = wire.NewSet(
-	notes.Providers,
 	wire.Struct(new(Server), "*"),
 	ProvideServerConfig,
+	database.Providers,
+	notes.Providers,
 )
 
 func ProvideServerConfig() Config {

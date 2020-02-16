@@ -7,6 +7,7 @@ package main
 
 import (
 	"github.com/shaned24/tough-notes-storage/notes/server/internal/notes"
+	"github.com/shaned24/tough-notes-storage/notes/server/internal/pkg/database"
 	"github.com/shaned24/tough-notes-storage/notes/server/internal/server"
 )
 
@@ -14,21 +15,21 @@ import (
 
 func setupServer() (*server.Server, error) {
 	config := server.ProvideServerConfig()
-	databaseConfig, err := notes.ProvideDatabaseConfig()
+	databaseConfig, err := database.ProvideDatabaseConfig()
 	if err != nil {
 		return nil, err
 	}
-	client := notes.ProvideMongoClient(databaseConfig)
-	mongoDbName := notes.ProvideMongoDbName()
-	mongoCollectionName := notes.ProvideMongoCollectionName()
-	collection := notes.ProvideMongoCollection(client, mongoDbName, mongoCollectionName)
-	noteStorage := notes.ProvideNoteStorage(client, collection, databaseConfig)
+	client := database.ProvideMongoClient(databaseConfig)
+	mongoDbName := database.ProvideMongoDbName()
+	mongoCollectionName := database.ProvideMongoCollectionName()
+	collection := database.ProvideMongoCollection(client, mongoDbName, mongoCollectionName)
+	noteStorage := notes.ProvideNoteStorage(collection)
 	noteService := notes.ProvideNoteService(noteStorage)
-	database := notes.ProvideDatabase(client, collection, databaseConfig)
+	databaseDatabase := database.ProvideDatabase(client, databaseConfig)
 	serverServer := &server.Server{
 		Config:       config,
 		NotesService: noteService,
-		Database:     database,
+		Database:     databaseDatabase,
 	}
 	return serverServer, nil
 }

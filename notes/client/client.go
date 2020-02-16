@@ -39,7 +39,7 @@ func doCreateNoteUnary(client notespb.NoteServiceClient) {
 	log.Println("Creating a note...")
 
 	req := &notespb.CreateNoteRequest{
-		Note: &notespb.Note{
+		Note: &notespb.CreateNote{
 			Content:  "# Some Markdown yes!",
 			AuthorId: "shane_daly",
 			Title:    "First Note",
