@@ -32,7 +32,7 @@ type MongoStorage struct {
 	Collection *mongo.Collection
 }
 
-func (s *MongoStorage) GetNote(_ context.Context, noteId string) (*NoteItem, error) {
+func (s *MongoStorage) GetNote(ctx context.Context, noteId string) (*NoteItem, error) {
 	oid, err := primitive.ObjectIDFromHex(noteId)
 
 	if err != nil {
@@ -44,9 +44,8 @@ func (s *MongoStorage) GetNote(_ context.Context, noteId string) (*NoteItem, err
 
 	noteItem := &noteItem{}
 	filter := bson.M{"_id": oid}
-	mongoCtx, _ := context.WithTimeout(context.Background(), 5*time.Second)
 
-	result := s.Collection.FindOne(mongoCtx, filter)
+	result := s.Collection.FindOne(ctx, filter)
 	if err := result.Decode(noteItem); err != nil {
 		return nil, status.Errorf(
 			codes.NotFound,
