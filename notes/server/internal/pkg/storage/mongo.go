@@ -14,46 +14,17 @@ import (
 	"time"
 )
 
-type MongoConfig struct {
-	Host              string
-	Port              string
-	ConnectionTimeout time.Duration
-}
-
-func NewMongoClient(cfg *MongoConfig) *mongo.Client {
-	mongoClient, err := mongo.NewClient(options.Client().ApplyURI(
-		fmt.Sprintf("mongodb://%s:%s", cfg.Host, cfg.Port)))
-
-	if err != nil {
-		log.Fatalf("failed to initialize the mongodb client: %v", err)
-	}
-
-	mongoCtx, _ := context.WithTimeout(context.Background(), cfg.ConnectionTimeout)
-
-	err = mongoClient.Connect(mongoCtx)
-	if err != nil {
-		log.Fatalf("failed to connect to mongodb server: %v", err)
-	}
-
-	ctx, _ := context.WithTimeout(context.Background(), 2*time.Second)
-	err = mongoClient.Ping(ctx, readpref.Primary())
-
-	if err != nil {
-		log.Fatalf("Mongo server not available")
-	}
-
-	return mongoClient
-}
-
-func NewMongoCollection(client *mongo.Client, dbName string, collectionName string) *mongo.Collection {
-	return client.Database(dbName).Collection(collectionName)
-}
-
 type noteItem struct {
 	ID       primitive.ObjectID `bson:"_id,omitempty"`
 	AuthorID string             `bson:"author_id"`
 	Content  string             `bson:"content"`
 	Title    string             `bson:"title"`
+}
+
+type MongoConfig struct {
+	Host              string
+	Port              string
+	ConnectionTimeout time.Duration
 }
 
 type MongoStorage struct {
@@ -62,7 +33,6 @@ type MongoStorage struct {
 }
 
 func (s *MongoStorage) GetNote(_ context.Context, noteId string) (*NoteItem, error) {
-
 	oid, err := primitive.ObjectIDFromHex(noteId)
 
 	if err != nil {
@@ -77,7 +47,6 @@ func (s *MongoStorage) GetNote(_ context.Context, noteId string) (*NoteItem, err
 	mongoCtx, _ := context.WithTimeout(context.Background(), 5*time.Second)
 
 	result := s.Collection.FindOne(mongoCtx, filter)
-
 	if err := result.Decode(noteItem); err != nil {
 		return nil, status.Errorf(
 			codes.NotFound,
@@ -114,4 +83,33 @@ func (s *MongoStorage) CreateNote(ctx context.Context, note *NoteItem) (*NoteIte
 	note.ID = oid.Hex()
 
 	return note, nil
+}
+
+func NewMongoClient(cfg *MongoConfig) *mongo.Client {
+	var mongoClient *mongo.Client
+	var err error
+
+	opts := options.Client()
+	opts.ApplyURI(fmt.Sprintf("mongodb://%s:%s", cfg.Host, cfg.Port))
+
+	if mongoClient, err = mongo.NewClient(opts); err != nil {
+		log.Fatalf("failed to initialize the mongodb client: %v", err)
+	}
+
+	mongoCtx, _ := context.WithTimeout(context.Background(), cfg.ConnectionTimeout)
+	if err = mongoClient.Connect(mongoCtx); err != nil {
+		log.Fatalf("failed to connect to mongodb server: %v", err)
+	}
+
+	ctx, _ := context.WithTimeout(context.Background(), 2*time.Second)
+	if err = mongoClient.Ping(ctx, readpref.Primary()); err != nil {
+		log.Fatalf("Mongo server not available")
+
+	}
+
+	return mongoClient
+}
+
+func NewMongoCollection(client *mongo.Client, dbName string, collectionName string) *mongo.Collection {
+	return client.Database(dbName).Collection(collectionName)
 }
