@@ -34,5 +34,5 @@ The [protoc](https://github.com/protocolbuffers/protobuf) compiler is required t
 ### Running the server
 
 ```bash
-go run ./notes/server
+go run .
 ```

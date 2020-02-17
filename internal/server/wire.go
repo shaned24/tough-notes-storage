@@ -2,8 +2,8 @@ package server
 
 import (
 	"github.com/google/wire"
-	"github.com/shaned24/tough-notes-storage/notes/server/internal/notes"
-	"github.com/shaned24/tough-notes-storage/notes/server/internal/pkg/database"
+	"github.com/shaned24/tough-notes-storage/internal/notes"
+	"github.com/shaned24/tough-notes-storage/internal/pkg/database"
 )
 
 var Providers = wire.NewSet(

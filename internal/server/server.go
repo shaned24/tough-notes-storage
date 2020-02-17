@@ -3,9 +3,9 @@ package server
 import (
 	"context"
 	"fmt"
-	"github.com/shaned24/tough-notes-storage/notes/notespb"
-	"github.com/shaned24/tough-notes-storage/notes/server/internal/notes"
-	"github.com/shaned24/tough-notes-storage/notes/server/internal/pkg/database"
+	"github.com/shaned24/tough-notes-storage/api/notespb"
+	"github.com/shaned24/tough-notes-storage/internal/notes"
+	"github.com/shaned24/tough-notes-storage/internal/pkg/database"
 	"google.golang.org/grpc"
 	"log"
 	"net"

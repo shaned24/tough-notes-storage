@@ -16,7 +16,7 @@ TEST_COMMAND=go test ./...
 .PHONY: deploy
 
 generate:
-	@protoc notes/notespb/notes.proto --go_out=plugins=grpc:.
+	@protoc api/notespb/notes.proto --go_out=plugins=grpc:.
 
 docker-build:
 	@docker build . -f docker/Dockerfile -t $(IMAGE):$(TAG)
@@ -40,7 +40,7 @@ logs:
 	$(DEV_ENV) logs -f
 
 run:
-	go run notes/server/server.go
+	go run .
 
 client-run:
 	go run notes/client/client.go
@@ -51,7 +51,7 @@ docker-run:
 mocks:
 	mockgen \
 	 -package tests \
-	 -destination notes/server/internal/pkg/storage/tests/mocks.go $(GO_PACKAGE)/notes/server/internal/pkg/storage NoteStorage
+	 -destination internal/pkg/storage/tests/mocks.go $(GO_PACKAGE)/internal/pkg/storage NoteStorage
 
 clean:
 	rm c.out
@@ -66,4 +66,4 @@ deploy:
 	./scripts/deploy.sh
 
 wire:
-	wire ./notes/server
+	wire

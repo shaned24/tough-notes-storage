@@ -3,8 +3,8 @@ package notes
 import (
 	"context"
 	"fmt"
-	"github.com/shaned24/tough-notes-storage/notes/notespb"
-	"github.com/shaned24/tough-notes-storage/notes/server/internal/pkg/storage"
+	"github.com/shaned24/tough-notes-storage/api/notespb"
+	"github.com/shaned24/tough-notes-storage/internal/pkg/storage"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

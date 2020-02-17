@@ -2,7 +2,7 @@ package notes
 
 import (
 	"github.com/google/wire"
-	"github.com/shaned24/tough-notes-storage/notes/server/internal/pkg/storage"
+	"github.com/shaned24/tough-notes-storage/internal/pkg/storage"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 

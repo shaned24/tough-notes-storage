@@ -6,9 +6,9 @@
 package main
 
 import (
-	"github.com/shaned24/tough-notes-storage/notes/server/internal/notes"
-	"github.com/shaned24/tough-notes-storage/notes/server/internal/pkg/database"
-	"github.com/shaned24/tough-notes-storage/notes/server/internal/server"
+	"github.com/shaned24/tough-notes-storage/internal/notes"
+	"github.com/shaned24/tough-notes-storage/internal/pkg/database"
+	"github.com/shaned24/tough-notes-storage/internal/server"
 )
 
 // Injectors from inject.go:

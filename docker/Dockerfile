@@ -15,7 +15,7 @@ COPY . .
 # Builder
 FROM dev as builder
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -o /tough-notes ./notes/server
+RUN CGO_ENABLED=0 GOOS=linux go build -o /tough-notes
 
 # Production
 FROM scratch

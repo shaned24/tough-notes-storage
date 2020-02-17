@@ -2,7 +2,7 @@ package database
 
 import (
 	"github.com/google/wire"
-	"github.com/shaned24/tough-notes-storage/notes/server/config"
+	"github.com/shaned24/tough-notes-storage/internal/pkg/config"
 	"go.mongodb.org/mongo-driver/mongo"
 	"strconv"
 	"time"

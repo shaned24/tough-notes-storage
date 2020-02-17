@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"crypto/tls"
-	"github.com/shaned24/tough-notes-storage/notes/notespb"
+	"github.com/shaned24/tough-notes-storage/api/notespb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials"
