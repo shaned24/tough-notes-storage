@@ -16,6 +16,10 @@ type MongoDB struct {
 	Config *Config
 }
 
+func (*MongoDB) Name() string {
+	return "MongoDB"
+}
+
 func NewMongoDB(client *mongo.Client, config *Config) *MongoDB {
 	return &MongoDB{Client: client, Config: config}
 }

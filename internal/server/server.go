@@ -33,12 +33,8 @@ func (s *Server) Start() error {
 	var opts []grpc.ServerOption
 	gRPCServer := grpc.NewServer(opts...)
 
-	// Connect to the Database if one exists
-	if s.Database != nil {
-		err = s.Database.Connect(context.Background())
-		if err != nil {
-			return err
-		}
+	if err = s.connectToDatabase(); err != nil {
+		return err
 	}
 
 	// register the gRPC server with our protocol buffers
@@ -63,9 +59,36 @@ func (s *Server) Start() error {
 	_ = listener.Close()
 	log.Println("Stopping Notes service.")
 
-	if s.Database != nil {
-		_ = s.Database.Disconnect(context.Background())
+	if err = s.disconnectFromDatabase(); err != nil {
+		return err
 	}
 
+	return nil
+}
+
+// Connect to the Database if one exists
+func (s *Server) connectToDatabase() error {
+
+	if s.Database != nil {
+		log.Printf("Trying to connect to %s...", s.Database.Name())
+		err := s.Database.Connect(context.Background())
+		if err != nil {
+			return err
+		}
+		log.Printf("Connected to %s.", s.Database.Name())
+
+	}
+	return nil
+}
+
+// disconnect to the Database if one exists
+func (s *Server) disconnectFromDatabase() error {
+	if s.Database != nil {
+		log.Printf("Disconnecting from %s...", s.Database.Name())
+		err := s.Database.Disconnect(context.Background())
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }

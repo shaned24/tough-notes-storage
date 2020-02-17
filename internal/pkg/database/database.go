@@ -8,6 +8,7 @@ import (
 type Database interface {
 	Connect(ctx context.Context) error
 	Disconnect(ctx context.Context) error
+	Name() string
 }
 
 type Config struct {
