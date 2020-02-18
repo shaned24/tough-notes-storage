@@ -8,8 +8,6 @@ import (
 )
 
 func setupServer() (*server.Server, error) {
-	wire.Build(
-		server.Providers,
-	)
+	wire.Build(wireProviders)
 	return nil, nil
 }
