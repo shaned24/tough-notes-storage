@@ -16,7 +16,13 @@ TEST_COMMAND=go test ./...
 .PHONY: deploy
 
 generate:
-	@protoc api/notespb/notes.proto --go_out=plugins=grpc:.
+	protoc -I/usr/local/include -I. \
+	  -I$(GOPATH)/src \
+	  -I$(GOPATH)/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis \
+	  --go_out=plugins=grpc:. \
+	  --grpc-gateway_out=logtostderr=true:. \
+	  --swagger_out=logtostderr=true:. \
+	  api/notespb/notes.proto
 
 docker-build:
 	@docker build . -f docker/Dockerfile -t $(IMAGE):$(TAG)
@@ -67,3 +73,6 @@ deploy:
 
 wire:
 	wire
+
+evans:
+	@evans repl --path=$(HOME)/go/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis/
