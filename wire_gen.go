@@ -26,10 +26,12 @@ func setupServer() (*server.Server, error) {
 	noteStorage := notes.ProvideNoteStorage(collection)
 	noteService := notes.ProvideNoteService(noteStorage)
 	databaseDatabase := database.ProvideDatabase(client, databaseConfig)
+	httpGateway := server.ProvideHttpGateway(config)
 	serverServer := &server.Server{
 		Config:       config,
 		NotesService: noteService,
 		Database:     databaseDatabase,
+		HttpGateway:  httpGateway,
 	}
 	return serverServer, nil
 }

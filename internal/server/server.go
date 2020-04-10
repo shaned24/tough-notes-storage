@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/shaned24/tough-notes-storage/api/notespb"
 	"github.com/shaned24/tough-notes-storage/internal/pkg/database"
+	"github.com/shaned24/tough-notes-storage/internal/pkg/gateway"
 	"github.com/shaned24/tough-notes-storage/internal/pkg/notes"
 	"google.golang.org/grpc"
 	"log"
@@ -23,6 +24,7 @@ type Server struct {
 	Config       Config
 	NotesService *notes.NoteService
 	Database     database.Database
+	HttpGateway  *gateway.HttpGateway
 }
 
 func (s *Server) Start() error {
@@ -30,8 +32,12 @@ func (s *Server) Start() error {
 	if err != nil {
 		return err
 	}
-	var opts []grpc.ServerOption
-	gRPCServer := grpc.NewServer(opts...)
+
+	serverOptions := []grpc.ServerOption{
+		grpc.UnaryInterceptor(LogRequestInfoMiddleware()),
+	}
+
+	gRPCServer := grpc.NewServer(serverOptions...)
 
 	if err = s.connectToDatabase(); err != nil {
 		return err
