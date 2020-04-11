@@ -21,10 +21,10 @@ type Config struct {
 }
 
 type Server struct {
-	Config       Config
-	NotesService *notes.NoteService
-	Database     database.Database
-	HttpGateway  *gateway.HttpGateway
+	Config             Config
+	NotesService       *notes.NoteService
+	DatabaseConnection database.Connection
+	HttpGateway        *gateway.HttpGateway
 }
 
 func (s *Server) Start() error {
@@ -72,26 +72,26 @@ func (s *Server) Start() error {
 	return nil
 }
 
-// Connect to the Database if one exists
+// Connect to the Connection if one exists
 func (s *Server) connectToDatabase() error {
 
-	if s.Database != nil {
-		log.Printf("Trying to connect to %s...", s.Database.Name())
-		err := s.Database.Connect(context.Background())
+	if s.DatabaseConnection != nil {
+		log.Printf("Trying to connect to %s...", s.DatabaseConnection.Name())
+		err := s.DatabaseConnection.Connect(context.Background())
 		if err != nil {
 			return err
 		}
-		log.Printf("Connected to %s.", s.Database.Name())
+		log.Printf("Connected to %s.", s.DatabaseConnection.Name())
 
 	}
 	return nil
 }
 
-// disconnect to the Database if one exists
+// disconnect to the Connection if one exists
 func (s *Server) disconnectFromDatabase() error {
-	if s.Database != nil {
-		log.Printf("Disconnecting from %s...", s.Database.Name())
-		err := s.Database.Disconnect(context.Background())
+	if s.DatabaseConnection != nil {
+		log.Printf("Disconnecting from %s...", s.DatabaseConnection.Name())
+		err := s.DatabaseConnection.Disconnect(context.Background())
 		if err != nil {
 			return err
 		}

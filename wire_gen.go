@@ -25,13 +25,13 @@ func setupServer() (*server.Server, error) {
 	collection := database.ProvideMongoCollection(client, mongoDbName, mongoCollectionName)
 	noteStorage := notes.ProvideNoteStorage(collection)
 	noteService := notes.ProvideNoteService(noteStorage)
-	databaseDatabase := database.ProvideDatabase(client, databaseConfig)
+	connection := database.ProvideDatabaseConnection(client, databaseConfig)
 	httpGateway := server.ProvideHttpGateway(config)
 	serverServer := &server.Server{
-		Config:       config,
-		NotesService: noteService,
-		Database:     databaseDatabase,
-		HttpGateway:  httpGateway,
+		Config:             config,
+		NotesService:       noteService,
+		DatabaseConnection: connection,
+		HttpGateway:        httpGateway,
 	}
 	return serverServer, nil
 }

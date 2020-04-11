@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-type Database interface {
+type Connection interface {
 	Connect(ctx context.Context) error
 	Disconnect(ctx context.Context) error
 	Name() string

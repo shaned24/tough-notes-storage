@@ -26,5 +26,5 @@ func ProvideServerConfig() Config {
 
 func ProvideHttpGateway(c Config) *gateway.HttpGateway {
 	port := config.Getenv("GATEWAY_PORT", "8080")
-	return gateway.NewHttpGateway(port, c.Host, c.Protocol)
+	return gateway.NewHttpGateway(port, c.Host, c.Port)
 }

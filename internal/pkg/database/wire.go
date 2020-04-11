@@ -9,7 +9,7 @@ import (
 )
 
 var Providers = wire.NewSet(
-	ProvideDatabase,
+	ProvideDatabaseConnection,
 	ProvideDatabaseConfig,
 	mongoDbProviders,
 )
@@ -24,7 +24,7 @@ var mongoDbProviders = wire.NewSet(
 type MongoDbName string
 type MongoCollectionName string
 
-func ProvideDatabase(client *mongo.Client, cfg *Config) Database {
+func ProvideDatabaseConnection(client *mongo.Client, cfg *Config) Connection {
 	return NewMongoDB(client, cfg)
 }
 

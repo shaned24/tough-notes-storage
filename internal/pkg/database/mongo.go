@@ -11,20 +11,20 @@ import (
 	"time"
 )
 
-type MongoDB struct {
+type MongoConnection struct {
 	Client *mongo.Client
 	Config *Config
 }
 
-func (*MongoDB) Name() string {
-	return "MongoDB"
+func (*MongoConnection) Name() string {
+	return "MongoConnection"
 }
 
-func NewMongoDB(client *mongo.Client, config *Config) *MongoDB {
-	return &MongoDB{Client: client, Config: config}
+func NewMongoDB(client *mongo.Client, config *Config) *MongoConnection {
+	return &MongoConnection{Client: client, Config: config}
 }
 
-func (s *MongoDB) Connect(_ context.Context) error {
+func (s *MongoConnection) Connect(_ context.Context) error {
 	mongoCtx, _ := context.WithTimeout(context.Background(), s.Config.ConnectionTimeout)
 	if err := s.Client.Connect(mongoCtx); err != nil {
 		return errors.New(fmt.Sprintf("failed to connect to mongodb server: %v", err))
@@ -37,7 +37,7 @@ func (s *MongoDB) Connect(_ context.Context) error {
 	return nil
 }
 
-func (s *MongoDB) Disconnect(ctx context.Context) error {
+func (s *MongoConnection) Disconnect(ctx context.Context) error {
 	return s.Client.Disconnect(ctx)
 }
 

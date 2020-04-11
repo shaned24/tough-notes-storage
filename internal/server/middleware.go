@@ -16,6 +16,13 @@ func LogRequestInfoMiddleware() grpc.UnaryServerInterceptor {
 		if ok {
 			log.Printf("metadata: %v", md)
 		}
-		return handler(ctx, req)
+		resp, err := handler(ctx, req)
+		if err != nil {
+			log.Printf("error occured with request: %v", err)
+		}
+
+		log.Printf("response: %v", resp)
+
+		return resp, err
 	}
 }
