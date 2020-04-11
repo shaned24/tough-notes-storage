@@ -5,7 +5,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/magiconair/properties/assert"
 	"github.com/shaned24/tough-notes-storage/api/notespb"
-	"github.com/shaned24/tough-notes-storage/internal/notes"
+	"github.com/shaned24/tough-notes-storage/internal/pkg/notes"
 	"github.com/shaned24/tough-notes-storage/internal/pkg/storage"
 	"github.com/shaned24/tough-notes-storage/internal/pkg/storage/tests"
 	"github.com/stretchr/testify/require"

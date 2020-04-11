@@ -1,0 +1,4 @@
+[default]
+protoFile = ["api/notespb/notes.proto"]
+package = "storage"
+service = "NoteService"

@@ -1,6 +1,6 @@
 # Tough Notes Storage
 
- A notes storage application using [gRPC](#grpc) and [protocol buffers](#protocol-buffers) with a MongoDB backend
+ A notes storage application using [gRPC](#grpc), [protocol buffers](#protocol-buffers) and [gRPC Gateway](#grpc-gateway) with a MongoDB database
 
 
 ## Contents
@@ -9,6 +9,7 @@
     - [Environment Variables](#environment-variables)
     - [gRPC](#grpc)
     - [Protocol Buffers](#protocol-buffers)
+    - [gRPC Gateway](#grpc-gateway)
     - [Running the server](#running-the-server)
 
 ### Environment Variables
@@ -30,6 +31,11 @@ needed to get started
 ### Protocol Buffers
 
 The [protoc](https://github.com/protocolbuffers/protobuf) compiler is required to generate gRPC code.
+
+
+### gRPC gateway
+
+A [gRPC to JSON](https://github.com/grpc-ecosystem/grpc-gateway) proxy generator following the gRPC HTTP spec
 
 ### Running the server
 

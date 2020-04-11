@@ -4,8 +4,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/shaned24/tough-notes-storage/api/notespb"
-	"github.com/shaned24/tough-notes-storage/internal/notes"
 	"github.com/shaned24/tough-notes-storage/internal/pkg/database"
+	"github.com/shaned24/tough-notes-storage/internal/pkg/gateway"
+	"github.com/shaned24/tough-notes-storage/internal/pkg/notes"
 	"google.golang.org/grpc"
 	"log"
 	"net"
@@ -20,9 +21,10 @@ type Config struct {
 }
 
 type Server struct {
-	Config       Config
-	NotesService *notes.NoteService
-	Database     database.Database
+	Config             Config
+	NotesService       *notes.NoteService
+	DatabaseConnection database.Connection
+	HttpGateway        *gateway.HttpGateway
 }
 
 func (s *Server) Start() error {
@@ -30,8 +32,12 @@ func (s *Server) Start() error {
 	if err != nil {
 		return err
 	}
-	var opts []grpc.ServerOption
-	gRPCServer := grpc.NewServer(opts...)
+
+	serverOptions := []grpc.ServerOption{
+		grpc.UnaryInterceptor(LogRequestInfoMiddleware()),
+	}
+
+	gRPCServer := grpc.NewServer(serverOptions...)
 
 	if err = s.connectToDatabase(); err != nil {
 		return err
@@ -66,26 +72,26 @@ func (s *Server) Start() error {
 	return nil
 }
 
-// Connect to the Database if one exists
+// Connect to the Connection if one exists
 func (s *Server) connectToDatabase() error {
 
-	if s.Database != nil {
-		log.Printf("Trying to connect to %s...", s.Database.Name())
-		err := s.Database.Connect(context.Background())
+	if s.DatabaseConnection != nil {
+		log.Printf("Trying to connect to %s...", s.DatabaseConnection.Name())
+		err := s.DatabaseConnection.Connect(context.Background())
 		if err != nil {
 			return err
 		}
-		log.Printf("Connected to %s.", s.Database.Name())
+		log.Printf("Connected to %s.", s.DatabaseConnection.Name())
 
 	}
 	return nil
 }
 
-// disconnect to the Database if one exists
+// disconnect to the Connection if one exists
 func (s *Server) disconnectFromDatabase() error {
-	if s.Database != nil {
-		log.Printf("Disconnecting from %s...", s.Database.Name())
-		err := s.Database.Disconnect(context.Background())
+	if s.DatabaseConnection != nil {
+		log.Printf("Disconnecting from %s...", s.DatabaseConnection.Name())
+		err := s.DatabaseConnection.Disconnect(context.Background())
 		if err != nil {
 			return err
 		}

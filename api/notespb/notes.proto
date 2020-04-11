@@ -1,8 +1,8 @@
 syntax = "proto3";
-
+option go_package = "notespb";
 package storage;
 
-option go_package = "notespb";
+import "google/api/annotations.proto";
 
 message Note {
     string id = 1;
@@ -33,8 +33,20 @@ message ReadNoteResponse {
     Note note = 1;
 };
 
+message StringMessage {
+    string value = 1;
+}
 
 service NoteService {
-    rpc CreateNote (CreateNoteRequest) returns (CreateNoteResponse);
-    rpc ReadNote (ReadNoteRequest) returns (ReadNoteResponse);
+    rpc CreateNote (CreateNoteRequest) returns (CreateNoteResponse) {
+        option (google.api.http) = {
+            post: "/v1/notes"
+            body: "*"
+        };
+    }
+    rpc ReadNote (ReadNoteRequest) returns (ReadNoteResponse) {
+        option (google.api.http) = {
+            get: "/v1/notes/{id}"
+        };
+    }
 };

@@ -10,10 +10,10 @@ set -euo pipefail
 IFS=$'\n\t'
 
 # Initialize digital ocean token
-doctl auth init --access-token $DO_TOKEN
+doctl auth init --access-token "$DO_TOKEN"
 
 # Get the kubectl config
-doctl kubernetes cluster kubeconfig show $DO_CLUSTER_ID > ~/do.yaml
+doctl kubernetes cluster kubeconfig show "$DO_CLUSTER_ID" > ~/do.yaml
 
 # Set the configs
 export KUBECONFIG=~/do.yaml
@@ -24,5 +24,5 @@ helm init --client-only
 echo "Installing release"
 helm upgrade \
 	--install \
-	$(HELM_RELEASE_NAME) \
-	$(HELM_CHART)
+	"$(HELM_RELEASE_NAME)" \
+	"$(HELM_CHART)"
